@@ -1,9 +1,9 @@
 <template>
   <div class="page-main">
-    <CMap :points="dataPoints" @selected-point="listWith = $event" />
+    <CMap :points="dataPoints" @selected-point="selected = $event" />
     <CSidebar
       :points="dataPoints"
-      :start-list="listWith"
+      :selected="selected"
       class="page-main__sidebar"
     />
   </div>
@@ -16,13 +16,15 @@ import db from "../../../db.json";
 import { onMounted, ref } from "vue";
 
 const dataPoints = ref(null);
-const listWith = ref(null);
+const selected = ref(null);
 
 onMounted(getData);
 
 function getData() {
   const { points } = db;
-  dataPoints.value = points;
+  if (points) {
+    dataPoints.value = points;
+  }
 }
 </script>
 

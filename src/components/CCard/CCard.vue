@@ -1,5 +1,5 @@
 <template>
-  <div class="card" :class="{ card_selected: props.selected }">
+  <div class="card" :class="{ card_selected: selectedPoint }">
     <h3 class="card__title">{{ props.title }}</h3>
     <span class="card__address">{{ props.address }}</span>
     <button class="card__button">Самовывоз</button>
@@ -7,7 +7,13 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
+
 const props = defineProps({
+  index: {
+    type: Number,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -17,9 +23,13 @@ const props = defineProps({
     required: true,
   },
   selected: {
-    type: Boolean,
-    default: false,
+    type: Number,
+    default: null,
   },
+});
+
+const selectedPoint = computed(() => {
+  return props.index === props.selected;
 });
 </script>
 
@@ -59,21 +69,19 @@ const props = defineProps({
   }
 
   &_selected {
-    &:first-child {
-      background: #005bff;
+    background: #005bff;
 
-      .card__title {
-        color: #ffffff;
-      }
+    .card__title {
+      color: #ffffff;
+    }
 
-      .card__address {
-        color: rgba(255, 255, 255, 0.6);
-      }
+    .card__address {
+      color: rgba(255, 255, 255, 0.6);
+    }
 
-      .card__button {
-        background: #ffffff;
-        color: #000000;
-      }
+    .card__button {
+      background: #ffffff;
+      color: #000000;
     }
   }
 }

@@ -13,7 +13,8 @@
     "json-server": "^0.17.3",
     "vue": "^3.2.47",
     "vue-yandex-maps": "^0.12.7",
-    "vuex": "^4.0.2"
+    "vuex": "^4.0.2",
+    "animated-scroll-to": "^2.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
