@@ -1,8 +1,18 @@
 <template>
-  <div class="card" :class="{ card_selected: selectedPoint }">
-    <h3 class="card__title">{{ props.title }}</h3>
-    <span class="card__address">{{ props.address }}</span>
-    <button class="card__button">Самовывоз</button>
+  <div
+    class="card"
+    :class="{ card_selected: selectedPoint, card_balloon: props.balloon }"
+  >
+    <h3 class="card__title">{{ props.data.name }}</h3>
+    <span class="card__address">{{ props.data.address }}</span>
+    <button
+      v-if="props.balloon"
+      class="card__button"
+      @click="openPopup(props.data)"
+    >
+      Подробнее
+    </button>
+    <button v-else class="card__button">Самовывоз</button>
   </div>
 </template>
 
@@ -14,23 +24,30 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  title: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
+  data: {
+    type: Object,
+    default: () => {},
   },
   selected: {
     type: Number,
     default: null,
   },
+  balloon: {
+    type: Boolean,
+    default: false,
+  },
 });
+const emits = defineEmits(["openPopup"]);
 
 const selectedPoint = computed(() => {
   return props.index === props.selected;
 });
+
+function openPopup(data) {
+  if (props.balloon) {
+    emits("openPopup", data);
+  }
+}
 </script>
 
 <style lang="less">

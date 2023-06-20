@@ -4,8 +4,7 @@
       v-for="(item, index) in props.points"
       :key="index"
       :index="index"
-      :address="item.address"
-      :title="item.name"
+      :data="item"
       :selected="props.selected"
       class="sidebar__card"
     />

@@ -14,13 +14,12 @@
         marker-type="placemark"
         :coords="[point.coordinates.latitude, point.coordinates.longitude]"
         :hint-content="point.name"
-        :balloon-template="baloon(point.name, point.address)"
+        :balloon-template="balloon(point.name, point.address)"
         :icon="markerIcon"
         cluster-name="1"
         @balloonclose="emits('selectedPoint', null)"
         @balloonopen="emits('selectedPoint', index)"
-      />
-    </yandex-map>
+    /></yandex-map>
   </div>
 </template>
 
@@ -44,7 +43,7 @@ const markerIcon = ref({
   imageOffset: [-16, -50],
 });
 
-const baloon = computed(() => {
+const balloon = computed(() => {
   return (title, address) => {
     return `
         <div class="baloon">
