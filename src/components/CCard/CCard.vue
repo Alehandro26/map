@@ -101,5 +101,20 @@ function openPopup(data) {
       color: #000000;
     }
   }
+
+  &_balloon {
+    width: 214px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border: none;
+
+    .card__button {
+      padding: 11px 0;
+      width: 100%;
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 100%;
+      cursor: pointer;
+    }
+  }
 }
 </style>

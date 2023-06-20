@@ -2,29 +2,50 @@
   <div class="map">
     <yandex-map
       class="map__content"
-      :coords="[45.018391, 41.937909]"
+      :settings="settings"
+      :coordinates="[45.018391, 41.937909]"
       zoom="14"
       :controls="['trafficControl', 'geolocationControl', 'typeSelector']"
       map-type="map"
     >
-      <ymap-marker
+      <yandex-marker
         v-for="(point, index) in props.points"
         :key="point.id"
         :marker-id="point.id"
-        marker-type="placemark"
-        :coords="[point.coordinates.latitude, point.coordinates.longitude]"
-        :hint-content="point.name"
-        :balloon-template="balloon(point.name, point.address)"
-        :icon="markerIcon"
-        cluster-name="1"
-        @balloonclose="emits('selectedPoint', null)"
-        @balloonopen="emits('selectedPoint', index)"
-    /></yandex-map>
+        :coordinates="[point.coordinates.latitude, point.coordinates.longitude]"
+        :properties="{
+          hintContent: point.name,
+        }"
+        :options="{
+          iconLayout: 'default#imageWithContent',
+          iconImageHref:
+            'https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png',
+          iconImageOffset: [-16, -50],
+          iconImageSize: [32, 45],
+        }"
+        :events="['balloonclose', 'balloonopen']"
+        @balloonclose="balloonToggle(null)"
+        @balloonopen="balloonToggle(index)"
+      >
+        <template #component>
+          <CCard :data="point" :balloon="true" />
+        </template>
+      </yandex-marker>
+    </yandex-map>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { YandexMap, YandexMarker } from "vue-yandex-maps";
+import CCard from "../CCard/CCard.vue";
+
+const settings = {
+  apiKey: "",
+  lang: "ru_RU",
+  coordorder: "latlong",
+  enterprise: false,
+  version: "2.1",
+};
 
 const props = defineProps({
   points: {
@@ -34,26 +55,18 @@ const props = defineProps({
 });
 const emits = defineEmits(["selectedPoint"]);
 
+function balloonToggle(num) {
+  emits("selectedPoint", num);
+}
+
 // const greenIcon =
 //   "https://imgbb.su/images/2023/06/07/point-green78ddbddc17d786dc.png";
-const markerIcon = ref({
-  layout: "default#imageWithContent",
-  imageHref: "https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png",
-  imageSize: [32, 45],
-  imageOffset: [-16, -50],
-});
-
-const balloon = computed(() => {
-  return (title, address) => {
-    return `
-        <div class="baloon">
-          <h3 class="baloon__title">${title}</h3>
-          <span>${address}</span>
-          <button>Подробнее</button>
-        </div>
-        `;
-  };
-});
+// const markerIcon = ref({
+//   layout: "default#imageWithContent",
+//   imageHref: "https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png",
+//   imageSize: [32, 45],
+//   imageOffset: [-16, -50],
+// });
 </script>
 
 <style lang="less">
@@ -63,8 +76,17 @@ const balloon = computed(() => {
   }
 }
 
+.yandex-balloon {
+  width: 214px;
+  height: 148px;
+}
+
 [class$="balloon__content"] {
-  padding: 20px !important;
+  padding: 0 !important;
   margin: 0 !important;
+}
+
+[class$="balloon__tail"] {
+  display: none !important;
 }
 </style>
