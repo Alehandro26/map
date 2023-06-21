@@ -1,43 +1,52 @@
 <template>
   <div class="map">
     <yandex-map
+      ref="map"
       class="map__content"
       :settings="settings"
-      :coordinates="[45.018391, 41.937909]"
+      :coordinates="coordinates"
       zoom="14"
       :controls="['trafficControl', 'geolocationControl', 'typeSelector']"
       map-type="map"
     >
-      <yandex-marker
-        v-for="(point, index) in props.points"
-        :key="point.id"
-        :marker-id="point.id"
-        :coordinates="[point.coordinates.latitude, point.coordinates.longitude]"
-        :properties="{
-          hintContent: point.name,
-        }"
-        :options="{
-          iconLayout: 'default#imageWithContent',
-          iconImageHref:
-            'https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png',
-          iconImageOffset: [-16, -50],
-          iconImageSize: [32, 45],
-        }"
-        :events="['balloonclose', 'balloonopen']"
-        @balloonclose="balloonToggle(null)"
-        @balloonopen="balloonToggle(index)"
-      >
-        <template #component>
-          <CCard :data="point" :balloon="true" />
-        </template>
-      </yandex-marker>
+      <yandex-clusterer :options="{ preset: 'islands#nightCircleIcon' }">
+        <yandex-marker
+          v-for="(point, index) in props.points"
+          :key="point.id"
+          ref="markers"
+          :marker-id="point.id"
+          :coordinates="[
+            point.coordinates.latitude,
+            point.coordinates.longitude,
+          ]"
+          :properties="{
+            hintContent: point.name,
+          }"
+          :options="{
+            iconLayout: 'default#imageWithContent',
+            iconImageHref:
+              'https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png',
+            iconImageOffset: [-16, -50],
+            iconImageSize: [32, 45],
+            hideIconOnBalloonOpen: false,
+          }"
+          :events="['balloonclose', 'balloonopen']"
+          @balloonclose="balloonToggle(null, null)"
+          @balloonopen="balloonToggle(point, index)"
+        >
+          <template #component>
+            <CCard class="map__balloon" :data="point" :balloon="true" />
+          </template>
+        </yandex-marker>
+      </yandex-clusterer>
     </yandex-map>
   </div>
 </template>
 
 <script setup>
-import { YandexMap, YandexMarker } from "vue-yandex-maps";
+import { YandexMap, YandexClusterer, YandexMarker } from "vue-yandex-maps";
 import CCard from "../CCard/CCard.vue";
+import { ref } from "vue";
 
 const settings = {
   apiKey: "",
@@ -53,20 +62,32 @@ const props = defineProps({
     default: () => [],
   },
 });
+
 const emits = defineEmits(["selectedPoint"]);
 
-function balloonToggle(num) {
-  emits("selectedPoint", num);
-}
+const coordinates = ref([45.018391, 41.937909]);
+const markers = ref(null);
+const map = ref(null);
 
-// const greenIcon =
-//   "https://imgbb.su/images/2023/06/07/point-green78ddbddc17d786dc.png";
-// const markerIcon = ref({
-//   layout: "default#imageWithContent",
-//   imageHref: "https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png",
-//   imageSize: [32, 45],
-//   imageOffset: [-16, -50],
-// });
+function balloonToggle(point, num) {
+  console.log(map.value);
+  if (num === null) {
+    for (let i = 0; i < markers.value.length; i++) {
+      markers.value[i].options._options.iconImageHref =
+        "https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png";
+    }
+  } else {
+    markers.value[num].options._options.iconImageHref =
+      "https://imgbb.su/images/2023/06/07/point-green78ddbddc17d786dc.png";
+  }
+
+  emits("selectedPoint", num);
+
+  if (point) {
+    const { latitude, longitude } = point.coordinates;
+    coordinates.value = [latitude, longitude];
+  }
+}
 </script>
 
 <style lang="less">
