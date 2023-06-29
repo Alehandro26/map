@@ -35,17 +35,25 @@
           @balloonopen="balloonToggle(point, index)"
         >
           <template #component>
-            <CCard class="map__balloon" :data="point" :balloon="true" />
+            <CCard
+              ref="balloon"
+              class="map__balloon"
+              :data="point"
+              :balloon="true"
+              @open-popup="dataPopup = $event"
+            />
           </template>
         </yandex-marker>
       </yandex-clusterer>
     </yandex-map>
+    <CPopup v-model="dataPopup" class="map__popup" />
   </div>
 </template>
 
 <script setup>
 import { YandexMap, YandexClusterer, YandexMarker } from "vue-yandex-maps";
 import CCard from "../CCard/CCard.vue";
+import CPopup from "../CPopup/CPopup.vue";
 import { ref } from "vue";
 
 const settings = {
@@ -66,11 +74,18 @@ const props = defineProps({
 const emits = defineEmits(["selectedPoint"]);
 
 const coordinates = ref([45.018391, 41.937909]);
+const dataPopup = ref(null);
 const markers = ref(null);
 const map = ref(null);
+const balloon = ref(null);
+
+defineExpose({ balloon });
 
 function balloonToggle(point, num) {
-  console.log(map.value);
+  const balloonDocument = document.querySelector(".yandex-balloon");
+  const balloonHeight = document.querySelector(".map__balloon").clientHeight;
+  balloonDocument.style.height = balloonHeight + "px";
+
   if (num === null) {
     for (let i = 0; i < markers.value.length; i++) {
       markers.value[i].options._options.iconImageHref =
@@ -92,8 +107,17 @@ function balloonToggle(point, num) {
 
 <style lang="less">
 .map {
+  position: relative;
+
   &__content {
     height: 100vh;
+  }
+
+  &__popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 
