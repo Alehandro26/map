@@ -46,7 +46,9 @@
         </yandex-marker>
       </yandex-clusterer>
     </yandex-map>
-    <CPopup v-model="dataPopup" class="map__popup" />
+    <Teleport to="body">
+      <CPopup v-model="dataPopup" class="map__popup" />
+    </Teleport>
   </div>
 </template>
 
@@ -79,12 +81,16 @@ const markers = ref(null);
 const map = ref(null);
 const balloon = ref(null);
 
-defineExpose({ balloon });
-
 function balloonToggle(point, num) {
-  const balloonDocument = document.querySelector(".yandex-balloon");
-  const balloonHeight = document.querySelector(".map__balloon").clientHeight;
-  balloonDocument.style.height = balloonHeight + "px";
+  if (point) {
+    const balloonDocument = document.querySelector(".yandex-balloon");
+    const balloonHeight = document.querySelector(".map__balloon").clientHeight;
+    balloonDocument.style.height = balloonHeight + "px";
+
+    const { latitude, longitude } = point.coordinates;
+    coordinates.value = [latitude, longitude];
+  }
+
 
   if (num === null) {
     for (let i = 0; i < markers.value.length; i++) {
@@ -97,11 +103,6 @@ function balloonToggle(point, num) {
   }
 
   emits("selectedPoint", num);
-
-  if (point) {
-    const { latitude, longitude } = point.coordinates;
-    coordinates.value = [latitude, longitude];
-  }
 }
 </script>
 

@@ -44,9 +44,7 @@ const selectedPoint = computed(() => {
 });
 
 function openPopup(data) {
-  if (props.balloon) {
     emits("openPopup", data);
-  }
 }
 </script>
 

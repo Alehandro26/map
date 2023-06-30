@@ -1,7 +1,8 @@
 <template>
-  <div v-if="props.modelValue" class="popup">
+  <div v-if="props.modelValue" ref="popup" class="popup">
     <h3 class="popup__title">{{ props.modelValue.name }}</h3>
     <div class="popup__address">{{ props.modelValue.address }}</div>
+    <!--eslint-disable-next-line vue/no-v-html-->
     <p class="popup__description" v-html="props.modelValue.description" />
     <div v-if="props.modelValue.images.length" class="popup__images">
       <img
@@ -16,7 +17,8 @@
 </template>
 
 <script setup>
-// import vClickOutside from "v-click-outside";
+import { onClickOutside } from '@vueuse/core';
+import { ref } from 'vue';
 
 const props = defineProps({
   modelValue: {
@@ -24,12 +26,14 @@ const props = defineProps({
     default: () => {},
   },
 });
-// const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue"]);
+const popup = ref(null);
 
-// function closePopup() {
-//   console.log(1);
-//   emits("update:modelValue", null);
-// }
+onClickOutside(popup, closePopup)
+
+function closePopup() {
+  emits("update:modelValue", null);
+}
 </script>
 
 <style lang="less">
