@@ -3,7 +3,7 @@
     <h3 class="popup__title">{{ props.modelValue.name }}</h3>
     <div class="popup__address">{{ props.modelValue.address }}</div>
     <!--eslint-disable-next-line vue/no-v-html-->
-    <p class="popup__description" v-html="props.modelValue.description" />
+    <p class="popup__description" v-html="boldText" />
     <div v-if="props.modelValue.images.length" class="popup__images">
       <img
         v-for="(image, index) in props.modelValue.images"
@@ -17,8 +17,8 @@
 </template>
 
 <script setup>
-import { onClickOutside } from '@vueuse/core';
-import { ref } from 'vue';
+import { onClickOutside } from "@vueuse/core";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   modelValue: {
@@ -27,9 +27,17 @@ const props = defineProps({
   },
 });
 const emits = defineEmits(["update:modelValue"]);
+
 const popup = ref(null);
 
-onClickOutside(popup, closePopup)
+const boldText = computed(() => {
+  return props.modelValue.description.replace(
+    /До встречи на Ozon!/,
+    "<b>До встречи на Ozon!</b>"
+  );
+});
+
+onClickOutside(popup, closePopup);
 
 function closePopup() {
   emits("update:modelValue", null);
@@ -38,6 +46,8 @@ function closePopup() {
 
 <style lang="less">
 .popup {
+  width: 872px;
+  max-height: 540px;
   padding: 50px;
   display: flex;
   flex-direction: column;
@@ -54,10 +64,15 @@ function closePopup() {
   }
 
   &__address {
+    padding-left: 29px;
     color: #000;
     font-size: 16px;
     font-family: Inter;
     line-height: 130%;
+    background-image: url(https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png);
+    background-size: 15px 21px;
+    background-repeat: no-repeat;
+    background-position-x: 4px;
   }
 
   &__description {
@@ -75,6 +90,10 @@ function closePopup() {
 
   &__image {
     height: 171px;
+
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
   }
 }
 </style>

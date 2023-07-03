@@ -7,6 +7,7 @@
       :data="item"
       :selected="props.selected"
       class="sidebar__card"
+      @click="selectedPoint(index)"
     />
   </aside>
 </template>
@@ -26,6 +27,7 @@ const props = defineProps({
     default: null,
   },
 });
+const emits = defineEmits(['update:selected'])
 
 //Массив карточек боковой панели
 let cardEls;
@@ -60,6 +62,10 @@ function goToPoint(index) {
     maxDuration: 300,
     verticalOffset: mid,
   });
+}
+
+function selectedPoint(val) {
+  emits('update:selected', val);
 }
 </script>
 

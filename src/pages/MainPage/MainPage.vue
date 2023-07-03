@@ -1,9 +1,9 @@
 <template>
   <div class="page-main">
-    <CMap :points="dataPoints" @selected-point="selected = $event" />
+    <CMap v-model:selected="selected" :points="dataPoints" />
     <CSidebar
+      v-model:selected="selected"
       :points="dataPoints"
-      :selected="selected"
       class="page-main__sidebar"
     />
   </div>
@@ -13,7 +13,7 @@
 import CMap from "../../components/CMap/CMap.vue";
 import CSidebar from "../../components/CSidebar/CSidebar.vue";
 import db from "../../../db.json";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 const dataPoints = ref(null);
 const selected = ref(null);
@@ -26,6 +26,10 @@ function getData() {
     dataPoints.value = points;
   }
 }
+
+watch(() => selected.value, (v) => {
+  console.log(v);
+})
 </script>
 
 <style lang="less">
