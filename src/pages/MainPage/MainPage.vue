@@ -12,24 +12,15 @@
 <script setup>
 import CMap from "../../components/CMap/CMap.vue";
 import CSidebar from "../../components/CSidebar/CSidebar.vue";
-import db from "../../../db.json";
-import { onMounted, ref, watch } from "vue";
+import { getData } from "../../api/index";
+import { onMounted, ref } from "vue";
 
 const dataPoints = ref(null);
 const selected = ref(null);
 
-onMounted(getData);
-
-function getData() {
-  const { points } = db;
-  if (points) {
-    dataPoints.value = points;
-  }
-}
-
-watch(() => selected.value, (v) => {
-  console.log(v);
-})
+onMounted(() => {
+  getData(dataPoints);
+});
 </script>
 
 <style lang="less">
