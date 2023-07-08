@@ -25,14 +25,14 @@
           :options="{
             iconLayout: 'default#imageWithContent',
             iconImageHref:
-              'https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png',
+              'https://i.postimg.cc/8cWL1HfB/point.png',
             iconImageOffset: [-16, -50],
             iconImageSize: [32, 45],
             hideIconOnBalloonOpen: false,
           }"
           :events="['balloonclose', 'balloonopen']"
-          @balloonclose="balloonToggle(null, null)"
-          @balloonopen="balloonToggle(point, index)"
+          @balloonclose="balloonToggle(null)"
+          @balloonopen="balloonToggle(index)"
         >
           <template #component>
             <CCard
@@ -84,23 +84,12 @@ const markers = ref(null);
 const map = ref(null);
 const prevPoint = ref(null);
 
-
-function balloonToggle(point, num) {
-  if (point) {
-    //Задает высоту balloon
-    const balloonDocument = document.querySelector(".yandex-balloon");
-    const balloonHeight = document.querySelector(".map__balloon").clientHeight;
-    balloonDocument.style.height = balloonHeight + "px";
-
-    //центрирование карты по выбранной точке
-    const { latitude, longitude } = point.coordinates;
-    coordinates.value = [latitude, longitude];
-  }
-
+//Переключатель балуна
+function balloonToggle(num) {
   if (num === null) {
-    changeIcon(prevPoint.value)
+    changeIcon(prevPoint.value);
   } else {
-    if (prevPoint.value) {
+    if (prevPoint.value || prevPoint.value === 0) {
       changeIcon(prevPoint.value);
     }
     changeIcon(num, true);
@@ -111,12 +100,17 @@ function balloonToggle(point, num) {
 }
 //Меняет иконку выбранной точки
 function changeIcon(value, selected = false) {
-  let icon = selected ? "https://imgbb.su/images/2023/06/07/point-green78ddbddc17d786dc.png" : "https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png";
+  let icon = selected ? "https://i.postimg.cc/SsnWPqyP/point-green.png" : "https://i.postimg.cc/8cWL1HfB/point.png";
 
   markers.value[value].options._options.iconImageHref = icon;
   markers.value[value].balloon._showIcon();
 }
-
+//Центрирование карты
+function centerMap(i) {
+  const { latitude, longitude } = props.points[i].coordinates;
+  coordinates.value = [latitude, longitude];
+}
+//Закрытие балуна, при закрытии попапа
 watch(() => dataPopup.value, (v) => {
   if (v !== null) return;
   markers.value[prevPoint.value].balloon.close();
@@ -124,8 +118,8 @@ watch(() => dataPopup.value, (v) => {
 //НЕОБХОДИМО доработать работы открытия балуна при клике на сайдбар
 watch(() => props.selected, (v,ov) => {
   if (v === ov || v === null) return;
-  const { latitude, longitude } = props.points[v].coordinates;
-  coordinates.value = [latitude, longitude];
+  balloonToggle(v);
+  centerMap(v);
 })
 </script>
 

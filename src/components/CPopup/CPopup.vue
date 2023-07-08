@@ -69,7 +69,7 @@ function closePopup() {
     font-size: 16px;
     font-family: Inter;
     line-height: 130%;
-    background-image: url(https://imgbb.su/images/2023/06/07/point75fa4ab876d4ee86.png);
+    background-image: url(https://i.postimg.cc/8cWL1HfB/point.png);
     background-size: 15px 21px;
     background-repeat: no-repeat;
     background-position-x: 4px;
