@@ -1,13 +1,14 @@
 <template>
   <div class="map">
     <yandex-map
-      ref="map"
       class="map__content"
       :settings="settings"
-      :coordinates="coordinates"
-      zoom="14"
+      :coordinates="optionsMap.coordinates"
+      :zoom="optionsMap.zoom"
       :controls="['trafficControl', 'geolocationControl', 'typeSelector']"
       map-type="map"
+      :events="['actionend']"
+      @actionend="newCenter"
     >
       <yandex-clusterer :options="{ preset: 'islands#nightCircleIcon' }">
         <yandex-marker
@@ -78,18 +79,29 @@ const props = defineProps({
 
 const emits = defineEmits(["update:selected"]);
 
-const coordinates = ref([45.018391, 41.937909]);
+const optionsMap = ref({
+  coordinates: [45.018391, 41.937909],
+  zoom: 14,
+})
 const dataPopup = ref(null);
 const markers = ref(null);
-const map = ref(null);
 const prevPoint = ref(null);
+const changeCenter = ref(false);
 
+//Вызова балуна, когда центр сменился
+function newCenter() {
+  changeCenter.value = true;
+
+  setTimeout(() => {
+    changeCenter.value = false;
+  }, 0)
+}
 //Переключатель балуна
 function balloonToggle(num) {
   if (num === null) {
     changeIcon(prevPoint.value);
   } else {
-    if (prevPoint.value || prevPoint.value === 0) {
+    if (prevPoint.value !== null) {
       changeIcon(prevPoint.value);
     }
     changeIcon(num, true);
@@ -108,19 +120,27 @@ function changeIcon(value, selected = false) {
 //Центрирование карты
 function centerMap(i) {
   const { latitude, longitude } = props.points[i].coordinates;
-  coordinates.value = [latitude, longitude];
+  optionsMap.value.coordinates = [latitude, longitude];
 }
 //Закрытие балуна, при закрытии попапа
 watch(() => dataPopup.value, (v) => {
   if (v !== null) return;
   markers.value[prevPoint.value].balloon.close();
 })
-//НЕОБХОДИМО доработать работы открытия балуна при клике на сайдбар
+//Открытие балуна при клике на сайдбар
 watch(() => props.selected, (v,ov) => {
   if (v === ov || v === null) return;
   balloonToggle(v);
   centerMap(v);
 })
+
+watch(() => changeCenter.value, (v) => {
+  if (!v) return;
+  if (!markers.value[prevPoint.value]?.balloon.isOpen()) {
+    markers.value[prevPoint.value]?.balloon.open();
+  }
+})
+//
 </script>
 
 <style lang="less">
