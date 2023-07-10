@@ -3,7 +3,7 @@
     <h3 class="popup__title">{{ props.modelValue.name }}</h3>
     <div class="popup__address">{{ props.modelValue.address }}</div>
     <!--eslint-disable-next-line vue/no-v-html-->
-    <p class="popup__description" v-html="boldText" />
+    <p v-if="boldText" class="popup__description" v-html="boldText" />
     <div v-if="props.modelValue.images.length" class="popup__images">
       <img
         v-for="(image, index) in props.modelValue.images"
@@ -31,10 +31,14 @@ const emits = defineEmits(["update:modelValue"]);
 const popup = ref(null);
 
 const boldText = computed(() => {
-  return props.modelValue.description.replace(
+  if (props.modelValue.description) {
+    return props.modelValue.description.replace(
     /До встречи на Ozon!/,
     "<b>До встречи на Ozon!</b>"
-  );
+    );
+  }
+  return null;
+
 });
 
 onClickOutside(popup, closePopup);
