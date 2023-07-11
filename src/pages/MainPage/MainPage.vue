@@ -24,13 +24,20 @@ onMounted(() => {
 </script>
 
 <style lang="less">
+@import '../../styles/vars.less';
+
 .page-main {
   position: relative;
 
   &__sidebar {
+    display: none;
     position: absolute;
     top: 0;
     left: 0;
+
+    @media @desktop-only {
+      display: block;
+    }
   }
 }
 </style>

@@ -51,6 +51,7 @@ function closePopup() {
 <style lang="less">
 .popup {
   width: 872px;
+  max-width: calc(100% - 20px);
   max-height: 540px;
   padding: 50px;
   display: flex;
